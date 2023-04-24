@@ -1,0 +1,11 @@
+alembic
+black
+fastapi[all]
+uvicorn[standard]
+pydantic
+SQLAlchemy
+psycopg2
+pika
+colorlog
+plotly
+pylint

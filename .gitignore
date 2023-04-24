@@ -1,0 +1,6 @@
+__pycache__
+versions
+myenv
+*.pyc
+*~
+*.db
