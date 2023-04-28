@@ -56,3 +56,18 @@ class QuizSchema(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class QueueCreateSchema(BaseModel):
+    queue: str
+
+    class Config:
+        orm_mode = True
+
+
+class QueueSchema(QueueCreateSchema):
+    category: str
+    answer: int
+
+    class Config:
+        orm_mode = True
