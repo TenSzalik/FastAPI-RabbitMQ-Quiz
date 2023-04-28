@@ -12,6 +12,10 @@ At this point, the project has a fully functional backend and frontend.
 - Alembic
 - Plotly
 - PostgreSQL
+- JavaScript/TypeScript
+- React
+- Vite
+- Tailwind
 
 ## How to run (on Linux)
 
