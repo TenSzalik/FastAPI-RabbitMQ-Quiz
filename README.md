@@ -2,7 +2,7 @@
 
 Brief description: we create a quiz by means of sending data to endpoints. When we start the test, RabbitMQ creates a queue for us that collects all the answers to the questions. The name of the queue is generated using UUID4 and stored in a cookie. At the end of the test, we return all the data from the queue, analyze it using the Plotly library and return it in the form of a radar chart. The responses are saved to a database which will allow for a statistical analysis in the future.
 
-At this point, the project is in development - the frontend and tests are missing. Other than that, the project has a fully functional backend.
+At this point, the project has a fully functional backend and frontend.
 
 ## Tech stack
 
@@ -14,6 +14,8 @@ At this point, the project is in development - the frontend and tests are missin
 - PostgreSQL
 
 ## How to run (on Linux)
+
+### Backend
 
 1. Install docker locally and download the container from RabbitMQ:
 
@@ -46,3 +48,25 @@ At this point, the project is in development - the frontend and tests are missin
     > alembic revision --autogenerate -m "First revision" 
 
     > alembic upgrade head
+
+### Frontend
+
+The frontend is handled by Vite. First install npm and Vite globally:
+
+> sudo apt install nodejs npm
+
+> npm install -g vite
+
+Go to the `/frontend` and run:
+
+> npm install
+
+> npm install react-router-dom@6
+
+> npm run dev
+
+The port should be set to 5173. This is required by the backend, otherwise you will get a CORS error. You can change the available ports in `backend/main.py`
+
+## Flow chart
+
+Coming soon... ⚒️
