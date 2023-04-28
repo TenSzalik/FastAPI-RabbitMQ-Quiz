@@ -15,7 +15,14 @@ def set_cookie():
     key = uuid4().hex
     content = {"queue": key}
     response = JSONResponse(content=content)
-    response.set_cookie(key="queue", value=key)
+    response.set_cookie(
+        key="queue",
+        value=key,
+        domain="localhost",
+        path="/",
+        secure=False,
+        httponly=False,
+    )
     return response
 
 
