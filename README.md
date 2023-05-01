@@ -1,8 +1,12 @@
-# REST Philosophical compass
+# Philosophical Compass
 
-Brief description: we create a quiz by means of sending data to endpoints. When we start the test, RabbitMQ creates a queue for us that collects all the answers to the questions. The name of the queue is generated using UUID4 and stored in a cookie. At the end of the test, we return all the data from the queue, analyze it using the Plotly library and return it in the form of a radar chart. The responses are saved to a database which will allow for a statistical analysis in the future.
+Short description: When we start the test, RabbitMQ creates a queue for us that collects all the answers to the questions. The name of the queue is generated using UUID4 and stored in a cookie. At the end of the test, we return all the data from the queue, analyze it using the Plotly library and return it in the form of a radar chart. The responses are saved to a database which will allow for a statistical analysis in the future.
 
 At this point, the project has a fully functional backend and frontend.
+
+## Flow chart
+
+![img](https://i.imgur.com/pQa7Byo.jpg)
 
 ## Tech stack
 
@@ -70,7 +74,3 @@ Go to the `/frontend` and run:
 > npm run dev
 
 The port should be set to 5173. This is required by the backend, otherwise you will get a CORS error. You can change the available ports in `backend/main.py`
-
-## Flow chart
-
-Coming soon... ⚒️
