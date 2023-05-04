@@ -1,3 +1,4 @@
+from json import loads
 from fastapi import APIRouter
 from fastapi.encoders import jsonable_encoder
 from core.rabbimq.rabbit_manager import (
@@ -6,8 +7,12 @@ from core.rabbimq.rabbit_manager import (
     RabbitDataProducer,
     RabbitProducer,
     RabbitDataConnection,
+    RabbitDataConnection,
+    RabbitDataConsumer,
+    RabbitConsumer,
 )
 from core.schemas.schemas import QueueSchema, QueueCreateSchema
+from core.utils.get_sum_dicts import get_sum_dicts
 
 router = APIRouter(
     prefix="/queue",
@@ -37,3 +42,30 @@ def send_to_queue(answer: QueueSchema):
     )
     RabbitProducer(creds=creds, producer=producer_data).send()
     return {"queue": answer.queue, "category": answer.category, "answer": answer.answer}
+
+
+@router.delete("/", response_model=QueueCreateSchema)
+def delete_queue(queue: QueueCreateSchema):
+    creds = RabbitDataConnection(
+        username="guest", password="guest1234", host="localhost"
+    )
+    queue_data = RabbitDataQueue(queue=queue.queue, durable=True)
+    RabbitQueue(creds=creds, queue=queue_data).delete_queue()
+    return {"queue": queue.queue}
+
+
+@router.post("/consume/")
+def consume_queue(queue: QueueCreateSchema):
+    quiz_raw_data = []
+    creds = RabbitDataConnection(
+        username="guest", password="guest1234", host="localhost"
+    )
+    consumer_data = RabbitDataConsumer(queue=queue.queue, auto_ack=True)
+    consumer = RabbitConsumer(creds=creds, consumer=consumer_data)
+    count, message = consumer.consume_messages()
+    quiz_raw_data.append(loads(message.decode().replace("'", '"')))
+    for x in range(count):
+        count, message = consumer.consume_messages()
+        quiz_raw_data.append(loads(message.decode().replace("'", '"')))
+
+    return get_sum_dicts(quiz_raw_data)
