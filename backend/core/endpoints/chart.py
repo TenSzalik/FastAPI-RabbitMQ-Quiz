@@ -1,8 +1,6 @@
-from fastapi import Cookie, APIRouter
+from fastapi import APIRouter
 from core.chart.chart_manager import DataCategoryChart, DataPointsChart, GenerateChart
-from core.utils.get_sum_dicts import get_sum_dicts
-from core.utils.consume_queue import consume_queue
-from core.schemas.schemas import QueueCreateSchema
+from core.schemas.schemas import ChartSchema
 
 router = APIRouter(
     prefix="/chart",
@@ -11,14 +9,12 @@ router = APIRouter(
 )
 
 
-@router.post("/", response_model=QueueCreateSchema)
-def create_chart(queue: QueueCreateSchema):
-    quiz_data = consume_queue(queue.queue)
-    sum_quiz_data = get_sum_dicts(quiz_data)
-    list_categories = list(sum_quiz_data.keys())
-    list_values = list(sum_quiz_data.values())
+@router.post("/")
+def create_chart(queue_smooth_data: ChartSchema):
+    list_categories = list(queue_smooth_data.queue_smooth_data.keys())
+    list_values = list(queue_smooth_data.queue_smooth_data.values())
     cat = DataCategoryChart(list_categories)
     poi = DataPointsChart(list_values)
     chart = GenerateChart(cat, poi)
     chart.generate_chart()
-    return {"queue": queue.queue}
+    return "Chart was created"
