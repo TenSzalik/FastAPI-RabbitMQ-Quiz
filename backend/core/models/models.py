@@ -1,7 +1,5 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Table
-from sqlalchemy.orm import Mapped
-from sqlalchemy.orm import mapped_column
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, ForeignKey, Integer, String, Table, Enum
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .database import Base
 
@@ -54,3 +52,12 @@ class Quiz(Base):
     question: Mapped["Question"] = relationship(
         back_populates="quiz_question", lazy="selectin"
     )
+
+
+class Result(Base):
+    __tablename__ = "result"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    age: Mapped[int] = mapped_column(Integer)
+    sex: Mapped[str] = mapped_column(String)
+    quiz: Mapped[str] = mapped_column(String)

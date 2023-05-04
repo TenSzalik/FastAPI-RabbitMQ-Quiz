@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from typing import Optional
 
 
 class BaseSchema(BaseModel):
@@ -71,3 +70,16 @@ class QueueSchema(QueueCreateSchema):
 
     class Config:
         orm_mode = True
+
+
+class ResultCreateSchema(BaseModel):
+    age: int
+    sex: str
+    quiz: str
+
+    class Config:
+        orm_mode = True
+
+
+class ChartSchema(BaseModel):
+    queue_smooth_data: dict

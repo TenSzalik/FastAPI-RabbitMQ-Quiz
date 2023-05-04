@@ -79,3 +79,12 @@ def create_answer(answer: schemas.AnswerCreateSchema, db: Session = Depends(get_
     db.commit()
     db.refresh(answer_model)
     return {"name": answer_model.name, "value": answer_model.value}
+
+
+@router.post("/result/", response_model=schemas.ResultCreateSchema)
+def save_result(result: schemas.ResultCreateSchema, db: Session = Depends(get_db)):
+    result_model = models.Result(age=result.age, sex=result.sex, quiz=result.quiz)
+    db.add(result_model)
+    db.commit()
+    db.refresh(result_model)
+    return {"age": result_model.age, "sex": result_model.sex, "quiz": result_model.quiz}
