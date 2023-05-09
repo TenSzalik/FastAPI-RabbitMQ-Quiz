@@ -1,6 +1,5 @@
-from fastapi import Cookie, HTTPException
-from fastapi.responses import JSONResponse
 from uuid import uuid4
+from fastapi.responses import JSONResponse
 from fastapi import APIRouter
 
 router = APIRouter(
@@ -24,11 +23,3 @@ def set_cookie():
         httponly=False,
     )
     return response
-
-
-@router.get("/check/")
-def check_cookie(queue: str = Cookie(None)):
-    if not queue:
-        return HTTPException(status_code=404, detail="Cookie not found")
-    if queue:
-        return HTTPException(status_code=200, detail="Cookie exist")

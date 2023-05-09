@@ -1,0 +1,10 @@
+[MAIN]
+
+disable = missing-module-docstring,
+    line-too-long,
+    missing-class-docstring,
+    too-few-public-methods,
+    logging-fstring-interpolation,
+    missing-function-docstring,
+    import-error,
+    

@@ -1,17 +1,16 @@
 from json import loads
 from fastapi import APIRouter
 from fastapi.encoders import jsonable_encoder
-from core.rabbimq.rabbit_manager import (
+from core.managers.rabbit_manager import (
     RabbitDataQueue,
     RabbitQueue,
     RabbitDataProducer,
     RabbitProducer,
     RabbitDataConnection,
-    RabbitDataConnection,
     RabbitDataConsumer,
     RabbitConsumer,
 )
-from core.schemas.schemas import QueueSchema, QueueCreateSchema
+from core.models.schemas import QueueSchema, QueueCreateSchema
 from core.utils.get_sum_dicts import get_sum_dicts
 
 router = APIRouter(
@@ -64,8 +63,7 @@ def consume_queue(queue: QueueCreateSchema):
     consumer = RabbitConsumer(creds=creds, consumer=consumer_data)
     count, message = consumer.consume_messages()
     quiz_raw_data.append(loads(message.decode().replace("'", '"')))
-    for x in range(count):
+    for number_of_messages in range(count):  # pylint: disable=unused-variable
         count, message = consumer.consume_messages()
         quiz_raw_data.append(loads(message.decode().replace("'", '"')))
-
     return get_sum_dicts(quiz_raw_data)

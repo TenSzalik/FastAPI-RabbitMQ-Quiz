@@ -1,3 +1,4 @@
+# pylint: disable=no-name-in-module
 from pydantic import BaseModel
 
 
@@ -39,9 +40,9 @@ class QuestionSchema(BaseSchema):
 
 
 class QuizCreateSchema(BaseModel):
-    category: int
-    answer: list[int]
-    question: int
+    category: str
+    answer: list[str]
+    question: str
 
     class Config:
         orm_mode = True

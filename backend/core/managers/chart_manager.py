@@ -31,6 +31,6 @@ class GenerateChart:
             )
         )
         fig.update_layout(
-            polar=dict(radialaxis=dict(visible=True, range=[0, 10])), showlegend=False
+            polar={"radialaxis": {"visible": True, "range": [0, 10]}}, showlegend=False
         )
         fig.show()

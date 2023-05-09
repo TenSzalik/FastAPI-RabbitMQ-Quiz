@@ -1,9 +1,17 @@
-from fastapi import Depends
+from fastapi import APIRouter, Depends
+from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 from core.models.database import SessionLocal
-import core.schemas.schemas as schemas, core.models.models as models
-from fastapi.encoders import jsonable_encoder
-from fastapi import APIRouter, Depends
+from core.models.schemas import (
+    QuizSchema,
+    QuizCreateSchema,
+    CategoryCreateSchema,
+    QuestionCreateSchema,
+    AnswerCreateSchema,
+    ResultCreateSchema,
+)
+from core.models.models import Category, Answer, Question, Quiz, Result
+
 
 router = APIRouter(
     prefix="/quiz",
@@ -12,79 +20,76 @@ router = APIRouter(
 )
 
 
-def get_db():
-    db = SessionLocal()
+def get_database():
+    database = SessionLocal()
     try:
-        yield db
+        yield database
     finally:
-        db.close()
+        database.close()
 
 
-@router.get("/", response_model=list[schemas.QuizSchema])
-def read_quiz(db: Session = Depends(get_db)):
-    quiz = db.query(models.Quiz).all()
-    return jsonable_encoder(quiz)
+@router.get("/", response_model=list[QuizSchema])
+def read_quiz(database: Session = Depends(get_database)):
+    quiz_list = database.query(Quiz).all()
+    return jsonable_encoder(quiz_list)
 
 
-@router.post("/", response_model=schemas.QuizCreateSchema)
-def create_quiz(question: schemas.QuizCreateSchema, db: Session = Depends(get_db)):
-    cat = (
-        db.query(models.Category)
-        .filter(models.Category.id == question.category)
-        .first()
+@router.post("/", response_model=QuizCreateSchema)
+def create_quiz(quiz: QuizCreateSchema, database: Session = Depends(get_database)):
+    category_obj = (
+        database.query(Category).filter(Category.name == quiz.category).first()
     )
-    ans = db.query(models.Answer).all()
-    que = (
-        db.query(models.Question)
-        .filter(models.Question.id == question.question)
-        .first()
+    answer_obj_list = [
+        database.query(Answer).filter(Answer.name == x).first() for x in quiz.answer
+    ]
+    question_obj = (
+        database.query(Question).filter(Question.name == quiz.question).first()
     )
-    db_answer = models.Quiz(category=cat, answer=ans, question=que)
-    db.add(db_answer)
-    db.commit()
-    db.refresh(db_answer)
+    database_quiz = Quiz(
+        category=category_obj, answer=answer_obj_list, question=question_obj
+    )
+    database.add(database_quiz)
+    database.commit()
     return {
-        "category": db_answer.category.id,
-        "answer": [x.id for x in db_answer.answer],
-        "question": db_answer.question.id,
+        "category": database_quiz.category.name,
+        "answer": [x.name for x in database_quiz.answer],
+        "question": database_quiz.question.name,
     }
 
 
-@router.post("/category/", response_model=schemas.CategoryCreateSchema)
+@router.post("/category/", response_model=CategoryCreateSchema)
 def create_category(
-    category: schemas.CategoryCreateSchema, db: Session = Depends(get_db)
+    category: CategoryCreateSchema, database: Session = Depends(get_database)
 ):
-    category_model = models.Category(name=category.name)
-    db.add(category_model)
-    db.commit()
-    db.refresh(category_model)
-    return {"name": category_model.name}
+    category_obj = Category(name=category.name)
+    database.add(category_obj)
+    database.commit()
+    return {"name": category_obj.name}
 
 
-@router.post("/question/", response_model=schemas.QuestionCreateSchema)
+@router.post("/question/", response_model=QuestionCreateSchema)
 def create_question(
-    question: schemas.QuestionCreateSchema, db: Session = Depends(get_db)
+    question: QuestionCreateSchema, database: Session = Depends(get_database)
 ):
-    question_model = models.Question(name=question.name)
-    db.add(question_model)
-    db.commit()
-    db.refresh(question_model)
-    return {"name": question_model.name}
+    question_obj = Question(name=question.name)
+    database.add(question_obj)
+    database.commit()
+    return {"name": question_obj.name}
 
 
-@router.post("/answer/", response_model=schemas.AnswerCreateSchema)
-def create_answer(answer: schemas.AnswerCreateSchema, db: Session = Depends(get_db)):
-    answer_model = models.Answer(name=answer.name, value=answer.value)
-    db.add(answer_model)
-    db.commit()
-    db.refresh(answer_model)
-    return {"name": answer_model.name, "value": answer_model.value}
+@router.post("/answer/", response_model=AnswerCreateSchema)
+def create_answer(
+    answer: AnswerCreateSchema, database: Session = Depends(get_database)
+):
+    answer_obj = Answer(name=answer.name, value=answer.value)
+    database.add(answer_obj)
+    database.commit()
+    return {"name": answer_obj.name, "value": answer_obj.value}
 
 
-@router.post("/result/", response_model=schemas.ResultCreateSchema)
-def save_result(result: schemas.ResultCreateSchema, db: Session = Depends(get_db)):
-    result_model = models.Result(age=result.age, sex=result.sex, quiz=result.quiz)
-    db.add(result_model)
-    db.commit()
-    db.refresh(result_model)
+@router.post("/result/", response_model=ResultCreateSchema)
+def save_result(result: ResultCreateSchema, database: Session = Depends(get_database)):
+    result_model = Result(age=result.age, sex=result.sex, quiz=result.quiz)
+    database.add(result_model)
+    database.commit()
     return {"age": result_model.age, "sex": result_model.sex, "quiz": result_model.quiz}

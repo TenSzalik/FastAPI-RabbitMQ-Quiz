@@ -5,7 +5,6 @@ from core.endpoints import quiz, queue, cookie, chart
 app = FastAPI()
 
 origins = [
-    "http://localhost:5173",
     "http://127.0.0.1:5173",
 ]
 

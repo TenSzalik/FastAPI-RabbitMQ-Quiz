@@ -1,8 +1,8 @@
-import pika
-import colorlog
 import logging
 from dataclasses import dataclass
 from enum import Enum
+import colorlog
+import pika
 
 handler = logging.StreamHandler()
 handler.setFormatter(
@@ -114,17 +114,6 @@ class RabbitExchange(RabbitConnection):
         super().__init__(creds)
         self.exchange = exchange
 
-    # def create_binding_key(self):
-    #     with self._get_connection() as channel:
-    #         channel.queue_bind(
-    #             exchange=self.exchange.exchange,
-    #             queue=self.exchange.queue,
-    #             routing_key=self.exchange.routing_key,
-    #         )
-    #         logger.info(
-    #             f"Exchange {self.exchange.exchange} has been connected with {self.exchange.queue} by routing key {self.exchange.routing_key}"
-    #         )
-
     def create_exchange(self):
         with self._get_connection() as channel:
             channel.exchange_declare(
@@ -165,7 +154,11 @@ class RabbitConsumer(RabbitConnection):
     def consume_messages(self):
         with self._get_connection() as channel:
             channel.basic_qos(prefetch_count=1)
-            method, properties, body = channel.basic_get(
+            (
+                method,
+                properties,  # pylint: disable=unused-variable
+                body,
+            ) = channel.basic_get(
                 queue=self.consumer.queue,
                 auto_ack=self.consumer.auto_ack,
             )

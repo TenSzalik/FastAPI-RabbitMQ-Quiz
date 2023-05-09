@@ -1,11 +1,8 @@
-alembic
-black
-fastapi[all]
-uvicorn[standard]
-pydantic
 SQLAlchemy
-psycopg2
-pika
 colorlog
+fastapi[all]
+pika
 plotly
-pylint
+psycopg2
+pydantic
+uvicorn[standard]
