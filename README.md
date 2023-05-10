@@ -37,7 +37,7 @@ At this point, the project has a fully functional backend and frontend.
 
     > sudo docker start rabbit-server
 
-2. Install PostgreSQL, create db and set username and password in `backend/core/models/database`
+2. Install PostgreSQL, create two db and set username and password in `backend/core/models/database` and `conftest.py`
 
 3. Create virtual enviroment for Python:
 
