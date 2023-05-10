@@ -7,6 +7,15 @@ from main import app
 from core.endpoints.quiz import get_database
 from core.models.database import Base
 from core.models.models import Category, Answer, Question, Quiz, Result
+from core.managers.rabbit_manager import (
+    RabbitDataConnection,
+    RabbitDataQueue,
+    RabbitDataProducer,
+    RabbitDataConsumer,
+    RabbitQueue,
+    RabbitProducer,
+    RabbitConsumer,
+)
 
 DB_USERNAME = os.environ["db_username"]
 DB_PASSWORD = os.environ["db_password"]
@@ -25,6 +34,10 @@ def override_get_database():
         yield database
     finally:
         database.close()
+
+
+app.dependency_overrides[get_database] = override_get_database
+client = TestClient(app)
 
 
 @pytest.fixture()
@@ -82,6 +95,30 @@ def load_database():
     database.commit()
 
 
-app.dependency_overrides[get_database] = override_get_database
+@pytest.fixture
+def rabbit_load_creds():
+    creds = RabbitDataConnection(
+        username="guest", password="guest1234", host="localhost"
+    )
+    return creds
 
-client = TestClient(app)
+
+@pytest.fixture
+def rabbit_load_queue(rabbit_load_creds):
+    queue_data = RabbitDataQueue(queue="test", durable=False)
+    queue = RabbitQueue(creds=rabbit_load_creds, queue=queue_data)
+    return queue
+
+
+@pytest.fixture
+def rabbit_load_producer(rabbit_load_creds):
+    producer_data = RabbitDataProducer("", routing_key="test", body="foo")
+    producer = RabbitProducer(creds=rabbit_load_creds, producer=producer_data)
+    return producer
+
+
+@pytest.fixture
+def rabbit_load_consumer(rabbit_load_creds):
+    consumer_data = RabbitDataConsumer(queue="test", auto_ack=True)
+    consumer = RabbitConsumer(creds=rabbit_load_creds, consumer=consumer_data)
+    return consumer
