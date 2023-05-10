@@ -80,6 +80,10 @@ class RabbitConnection:
         logger.info(f"Connecting to {self.creds.host} as {self.creds.username}")
         return connection.channel()
 
+    def check_is_channel_and_connection_open(self):
+        with self._get_connection() as channel:
+            return channel.is_open, channel.connection.is_open
+
 
 class RabbitProducer(RabbitConnection):
     def __init__(
