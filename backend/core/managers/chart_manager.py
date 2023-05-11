@@ -1,31 +1,27 @@
 from dataclasses import dataclass
 import plotly.graph_objects as go
+import plotly.io as pio
 
 
 @dataclass
-class DataCategoryChart:
+class DataChart:
     category: list[str]
-
-
-@dataclass
-class DataPointsChart:
     points: list[int]
 
 
 class GenerateChart:
-    def __init__(self, category: DataCategoryChart, points: DataPointsChart):
-        assert isinstance(category, DataCategoryChart)
-        assert isinstance(points, DataPointsChart)
-        self.category = category
-        self.points = points
+    def __init__(self, data: DataChart):
+        assert isinstance(data, DataChart)
+        self.category = data.category
+        self.points = data.points
 
     def generate_chart(self):
         fig = go.Figure()
 
         fig.add_trace(
             go.Scatterpolar(
-                r=self.points.points,
-                theta=self.category.category,
+                r=self.points,
+                theta=self.category,
                 fill="toself",
                 name="A",
             )
@@ -34,3 +30,5 @@ class GenerateChart:
             polar={"radialaxis": {"visible": True, "range": [0, 10]}}, showlegend=False
         )
         fig.show()
+        html_str = pio.to_html(fig, include_plotlyjs="cdn", full_html=False)
+        return html_str
