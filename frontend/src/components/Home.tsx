@@ -1,9 +1,16 @@
 function Home() {
   const setCookie = async () => {
-    const response = await fetch("http://127.0.0.1:8000/cookie/set/");
-    const data = await response.json();
-    const cookieValue = data.queue;
+    const cookieValue = createUUID4();
     document.cookie = `queue=${cookieValue}`;
+  };
+
+  const createUUID4 = () => {
+    return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
+      (
+        c ^
+        (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
+      ).toString(16)
+    );
   };
 
   const createQueue = async () => {
