@@ -6,6 +6,7 @@ function Quiz() {
   const [isLoading, setIsLoading] = useState(true);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [inputs, setInputs] = useState({});
+  const [chartHTML, setChartHTML] = useState("");
 
   useEffect(() => {
     const readQuiz = async () => {
@@ -63,8 +64,8 @@ function Quiz() {
   const deleteQueue = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch("http://127.0.0.1:8000/queue/", {
-        method: "DELETE",
+      const response = await fetch("http://127.0.0.1:8000/queue/delete/", {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ queue: queue }),
       });
@@ -87,6 +88,9 @@ function Quiz() {
       });
       if (!response.ok) throw Error("Something went wrong");
       setFetchError(null);
+      response.text().then((text) => {
+        setChartHTML(text);
+      });
     } catch (err: any | Error) {
       setFetchError(err.message);
     } finally {
@@ -138,9 +142,10 @@ function Quiz() {
     await sendResult(inputs.age, inputs.sex, JSON.stringify(inputs.quiz));
     await generateChart({ queue_smooth_data: inputs.quiz });
     await deleteQueue();
+    setCurrentQuestionIndex(currentQuestionIndex + 1);
   };
 
-  if (currentQuestionIndex >= dataQuiz.length) {
+  if (currentQuestionIndex == dataQuiz.length) {
     return (
       <div className="flex items-center justify-center h-screen">
         <form onSubmit={endQuiz}>
@@ -175,6 +180,16 @@ function Quiz() {
           </fieldset>
           <input type="submit" value="Submit" />
         </form>
+      </div>
+    );
+  }
+
+  if (currentQuestionIndex > dataQuiz.length) {
+    console.log("dupa!");
+    console.log(typeof chartHTML);
+    return (
+      <div>
+        <div dangerouslySetInnerHTML={{ __html: chartHTML }}></div>
       </div>
     );
   }
