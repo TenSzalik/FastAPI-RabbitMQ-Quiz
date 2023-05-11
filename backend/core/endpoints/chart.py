@@ -1,7 +1,6 @@
 from fastapi import APIRouter
 from core.managers.chart_manager import (
-    DataCategoryChart,
-    DataPointsChart,
+    DataChart,
     GenerateChart,
 )
 from core.models.schemas import ChartSchema
@@ -17,8 +16,6 @@ router = APIRouter(
 def create_chart(queue_smooth_data: ChartSchema):
     list_categories = list(queue_smooth_data.queue_smooth_data.keys())
     list_values = list(queue_smooth_data.queue_smooth_data.values())
-    category = DataCategoryChart(list_categories)
-    points = DataPointsChart(list_values)
-    chart = GenerateChart(category, points)
-    chart.generate_chart()
-    return "Chart was created"
+    data = DataChart(list_categories, list_values)
+    chart = GenerateChart(data)
+    return chart.generate_chart()
