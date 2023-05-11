@@ -43,7 +43,7 @@ def send_to_queue(answer: QueueSchema):
     return {"queue": answer.queue, "category": answer.category, "answer": answer.answer}
 
 
-@router.delete("/", response_model=QueueCreateSchema)
+@router.post("/delete/", response_model=QueueCreateSchema)
 def delete_queue(queue: QueueCreateSchema):
     creds = RabbitDataConnection(
         username="guest", password="guest1234", host="localhost"
