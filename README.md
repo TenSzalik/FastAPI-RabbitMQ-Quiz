@@ -20,6 +20,7 @@ At this point, the project has a fully functional backend and frontend.
 - Alembic
 - Plotly
 - PostgreSQL
+- Docker
 - JavaScript/TypeScript
 - React
 - Vite
@@ -33,33 +34,45 @@ At this point, the project has a fully functional backend and frontend.
 
     > sudo docker run --hostname localhost --name rabbit-server -e RABBITMQ_DEFAULT_USER=guest -e RABBITMQ_DEFAULT_PASS=guest1234 -p 5672:5672 -p 15672:15672 rabbitmq:3-management
 
-    if the container does not start:
+2. Go to `/backend` and run:
 
-    > sudo docker start rabbit-server
+    > sudo docker compose up --build
 
-2. Install PostgreSQL, create two db and set username and password in `backend/core/models/database` and `conftest.py`
+3. Sending data for endpoints /quiz requires migration:
 
-3. Create virtual enviroment for Python:
+    > sudo docker compose run web alembic upgrade head
 
-    > python3 -m venv venv
+    > sudo docker compose run web alembic revision --autogenerate -m "First revision" 
 
-    > source venv/bin/activate
+    > sudo docker compose run web alembic upgrade head
 
-4. Install requirements included in file requirements.txt
+#### Useful
 
-    > pip install -r requirements.txt
+- Swagger: http://localhost:8000/docs
 
-5. After instalation complete you can run server with project
+- Pgadmin: http://localhost:5050/
 
-    > uvicorn main:app --host localhost --port 4000 --reload
+- RabbitMQ: http://localhost:15672/
 
-6. Sending data for endpoints /quiz requires migration
+- Check active containers (eg. for name):
 
-    > alembic upgrade head
+    > sudo docker ps
 
-    > alembic revision --autogenerate -m "First revision" 
+- List containers:
 
-    > alembic upgrade head
+    > sudo docker container ls
+
+- Running tests:
+
+    1. Go to the docker container (web service, container must be active):
+
+        > sudo docker exec -it <container_name> sh
+
+    2. Run:
+
+        > pytest tests/tests_<test_name>.py
+
+- All credentials are in .env file (totally random btw.)
 
 ### Frontend
 
@@ -77,4 +90,4 @@ Go to the `/frontend` and run:
 
 > npm run dev
 
-The port should be set to 5173. This is required by the backend, otherwise you will get a CORS error. You can change the available ports in `backend/main.py`
+The port should be set to 5173. This is required by the backend, otherwise you will get a CORS error.

@@ -7,6 +7,8 @@ myenv
 *.pytest_cache
 .gitignore
 .vscode
+backend/data
+backend/postgres-data
 
 # Logs
 logs

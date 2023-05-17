@@ -17,11 +17,17 @@ from core.managers.rabbit_manager import (
     RabbitConsumer,
 )
 
-DB_USERNAME = os.environ["db_username"]
-DB_PASSWORD = os.environ["db_password"]
+POSTGRES_USERNAME = os.environ["POSTGRES_USERNAME"]
+POSTGRES_PASSWORD = os.environ["POSTGRES_PASSWORD"]
+POSTGRES_TEST_HOST = os.environ["POSTGRES_TEST_HOST"]
+POSTGRES_TEST_DB = os.environ["POSTGRES_TEST_DB"]
+
+RABBIT_USERNAME = os.environ["RABBIT_USERNAME"]
+RABBIT_PASSWORD = os.environ["RABBIT_PASSWORD"]
+RABBIT_HOST = os.environ["RABBIT_HOST"]
 
 SQLALCHEMY_DATABASE_URL = (
-    f"postgresql://{DB_USERNAME}:{DB_PASSWORD}@localhost/quiz_test"
+    f"postgresql://{POSTGRES_USERNAME}:{POSTGRES_PASSWORD}@{POSTGRES_TEST_HOST}/{POSTGRES_TEST_DB}"
 )
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
@@ -98,7 +104,7 @@ def load_database():
 @pytest.fixture
 def rabbit_load_creds():
     creds = RabbitDataConnection(
-        username="guest", password="guest1234", host="localhost"
+        username=RABBIT_USERNAME, password=RABBIT_PASSWORD, host=RABBIT_HOST
     )
     return creds
 

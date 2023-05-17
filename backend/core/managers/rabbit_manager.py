@@ -34,7 +34,7 @@ class Exchange(Enum):
 class RabbitDataConnection:
     username: str
     password: str
-    host: str = "localhost"
+    host: str
 
 
 @dataclass

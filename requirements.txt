@@ -1,8 +1,0 @@
-SQLAlchemy
-colorlog
-fastapi[all]
-pika
-plotly
-psycopg2
-pydantic
-uvicorn[standard]

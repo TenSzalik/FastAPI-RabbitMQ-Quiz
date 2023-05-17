@@ -1,3 +1,4 @@
+import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from core.endpoints import quiz, queue, chart
@@ -16,3 +17,6 @@ app.add_middleware(
 app.include_router(quiz.router)
 app.include_router(queue.router)
 app.include_router(chart.router)
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)

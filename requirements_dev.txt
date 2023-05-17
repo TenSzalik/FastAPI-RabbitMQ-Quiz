@@ -1,5 +1,0 @@
-alembic
-black
-httpx
-pylint
-pytest
