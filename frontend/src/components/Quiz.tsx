@@ -79,23 +79,27 @@ function Quiz() {
   };
 
   const generateChart = async (queue_smooth_data: {}) => {
-    try {
-      setIsLoading(true);
-      const response = await fetch("http://127.0.0.1:8000/chart/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(queue_smooth_data),
-      });
-      if (!response.ok) throw Error("Something went wrong");
-      setFetchError(null);
-      response.text().then((text) => {
-        setChartHTML(text);
-      });
-    } catch (err: any | Error) {
-      setFetchError(err.message);
-    } finally {
-      setIsLoading(false);
-    }
+    let data = [{
+      type: 'scatterpolar',
+      r: Object.values(Object.values(queue_smooth_data)[0]),
+      theta: Object.keys(Object.values(queue_smooth_data)[0]),
+      fill: 'toself'
+    }]
+
+    let layout = {
+      autosize: false,
+      width: 500,
+      height: 500,
+      polar: {
+        radialaxis: {
+          visible: true,
+          range: [0, 20],
+        },
+      },
+      showlegend: true,
+    };
+
+    Plotly.newPlot("chart", data, layout);
   };
 
   const getAnswers = async () => {
@@ -147,7 +151,7 @@ function Quiz() {
 
   if (currentQuestionIndex == dataQuiz.length) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div id="chart" className="flex items-center justify-center h-screen">
         <form onSubmit={endQuiz}>
           <fieldset>
             <legend>Age</legend>
