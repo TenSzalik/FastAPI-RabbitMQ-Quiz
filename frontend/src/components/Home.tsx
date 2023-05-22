@@ -1,4 +1,9 @@
-function Home() {
+import apiRequest from "../utils/apiRequest";
+import urls from "../utils/apiUrls";
+
+const Home = () => {
+  let fetchError: String | null = null
+  
   const setCookie = async () => {
     const cookieValue = createUUID4();
     document.cookie = `queue=${cookieValue}`;
@@ -15,25 +20,27 @@ function Home() {
 
   const createQueue = async () => {
     const queueCookie = document.cookie
-      .split(";")
-      .find((row) => row.startsWith(" queue="))
-      .split("=")[1];
-    const response = await fetch("http://127.0.0.1:8000/queue/create/", {
+    .split(";")
+    .find((row) => row.startsWith(" queue="))
+    .split("=")[1];
+    const url = urls.queue_create;
+    const options = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ queue: queueCookie }),
-    });
-    if (!response.ok) throw Error("SOmethink went wrong");
+    }
+    const request = await apiRequest(url, options);
+    fetchError = request;
   };
 
   const startQuiz = async () => {
-    try {
       await setCookie();
       await createQueue();
-      window.location.replace("/quiz");
-    } catch (error: any | Error) {
-      console.log(error);
-    }
+      if (fetchError == null) {
+        window.location.replace("/quiz");
+      } else {
+        alert(`Somethink went wrong :( Try again later! Error msg: ${fetchError}`)
+      }
   };
 
   return (
