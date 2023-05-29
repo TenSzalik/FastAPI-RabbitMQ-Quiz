@@ -8,10 +8,6 @@ At this point, the project has a fully functional backend and frontend.
 
 ![img](https://i.imgur.com/pQa7Byo.jpg)
 
-## Gif
-
-![gif](https://i.imgur.com/X06UsW9.gif)
-
 ## Tech stack
 
 - FastAPI
