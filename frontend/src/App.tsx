@@ -5,7 +5,7 @@ import Quiz from './components/Quiz'
 
 function App() {
   return (
-    <div>
+    <div className="bg-amber-100">
       <Routes>
         <Route
           path="/"

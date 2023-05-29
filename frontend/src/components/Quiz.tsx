@@ -61,6 +61,7 @@ const Quiz = () => {
     ];
     const layout = {
       autosize: false,
+      paper_bgcolor: "#fef3c7",
       width: 500,
       height: 500,
       polar: {
@@ -69,7 +70,7 @@ const Quiz = () => {
           range: [0, 20],
         },
       },
-      showlegend: true,
+      showlegend: false,
     };
     Plotly.newPlot("chart", data, layout);
   };
@@ -113,7 +114,9 @@ const Quiz = () => {
   };
 
   if (currentQuestionIndex == dataQuiz.length) {
-    return <QuizForm endQuiz={endQuiz} inputHandler={inputHandler} inputs={inputs}/>
+    return (
+      <QuizForm endQuiz={endQuiz} inputHandler={inputHandler} inputs={inputs} />
+    );
   }
 
   if (currentQuestionIndex > dataQuiz.length) {
