@@ -84,3 +84,23 @@ class ResultCreateSchema(BaseModel):
 
 class ChartSchema(BaseModel):
     queue_smooth_data: dict
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    email: str | None = None
+
+
+class UserSchema(BaseModel):
+    email: str
+    password: str
+    key: str
+
+
+class UserInDB(BaseModel):
+    email: str
+    hashed_password: str
