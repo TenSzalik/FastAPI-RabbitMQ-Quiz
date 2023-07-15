@@ -12,6 +12,14 @@ quiz_answer = Table(
 )
 
 
+class User(Base):
+    __tablename__ = "user"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    email: Mapped[str] = mapped_column(String(128), unique=True)
+    password: Mapped[str] = mapped_column(String(128))
+
+
 class Category(Base):
     __tablename__ = "category"
 
