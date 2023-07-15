@@ -47,7 +47,7 @@ const Home = () => {
 
   return (
     <div>
-      <div className="relative h-screen p-4">
+      <div className="relative h-screen bg-fixed bg-marcus bg-center p-4">
         <div className="text-center justify-center p-8 mt-24">
           <h1 className="text-8xl font-bold text-blue-600 tracking-wide">
             Philosophical Compass
