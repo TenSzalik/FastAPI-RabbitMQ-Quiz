@@ -1,7 +1,8 @@
+from typing import Annotated
 from fastapi import APIRouter, Depends
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
-from core.models.database import SessionLocal
+from core.models.database import get_database
 from core.models.schemas import (
     QuizSchema,
     QuizCreateSchema,
@@ -9,8 +10,10 @@ from core.models.schemas import (
     QuestionCreateSchema,
     AnswerCreateSchema,
     ResultCreateSchema,
+    UserSchema,
 )
 from core.models.models import Category, Answer, Question, Quiz, Result
+from core.endpoints.token import oauth2_scheme
 
 
 router = APIRouter(
@@ -20,14 +23,6 @@ router = APIRouter(
 )
 
 
-def get_database():
-    database = SessionLocal()
-    try:
-        yield database
-    finally:
-        database.close()
-
-
 @router.get("/", response_model=list[QuizSchema])
 def read_quiz(database: Session = Depends(get_database)):
     quiz_list = database.query(Quiz).all()
@@ -35,7 +30,13 @@ def read_quiz(database: Session = Depends(get_database)):
 
 
 @router.post("/", response_model=QuizCreateSchema)
-def create_quiz(quiz: QuizCreateSchema, database: Session = Depends(get_database)):
+def create_quiz(
+    current_user: Annotated[  # pylint: disable=unused-argument
+        UserSchema, Depends(oauth2_scheme)
+    ],
+    quiz: QuizCreateSchema,
+    database: Session = Depends(get_database),
+):
     category_obj = (
         database.query(Category).filter(Category.name == quiz.category).first()
     )
@@ -59,7 +60,11 @@ def create_quiz(quiz: QuizCreateSchema, database: Session = Depends(get_database
 
 @router.post("/category/", response_model=CategoryCreateSchema)
 def create_category(
-    category: CategoryCreateSchema, database: Session = Depends(get_database)
+    current_user: Annotated[  # pylint: disable=unused-argument
+        UserSchema, Depends(oauth2_scheme)
+    ],
+    category: CategoryCreateSchema,
+    database: Session = Depends(get_database),
 ):
     category_obj = Category(name=category.name)
     database.add(category_obj)
@@ -69,7 +74,11 @@ def create_category(
 
 @router.post("/question/", response_model=QuestionCreateSchema)
 def create_question(
-    question: QuestionCreateSchema, database: Session = Depends(get_database)
+    current_user: Annotated[  # pylint: disable=unused-argument
+        UserSchema, Depends(oauth2_scheme)
+    ],
+    question: QuestionCreateSchema,
+    database: Session = Depends(get_database),
 ):
     question_obj = Question(name=question.name)
     database.add(question_obj)
@@ -79,7 +88,11 @@ def create_question(
 
 @router.post("/answer/", response_model=AnswerCreateSchema)
 def create_answer(
-    answer: AnswerCreateSchema, database: Session = Depends(get_database)
+    current_user: Annotated[  # pylint: disable=unused-argument
+        UserSchema, Depends(oauth2_scheme)
+    ],
+    answer: AnswerCreateSchema,
+    database: Session = Depends(get_database),
 ):
     answer_obj = Answer(name=answer.name, value=answer.value)
     database.add(answer_obj)
