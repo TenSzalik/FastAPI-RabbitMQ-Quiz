@@ -4,7 +4,7 @@ A RESTFul site that allows you to create quizzes, give answers, and create a rad
 
 The main goal of this project is to gain an in-depth understanding of web development, a better understanding of FastAPI, OOP, RabbitMQ and some fun =)
 
-*Thanks to Joanna Petalek for preparing the background and icon of Marcus Aurelius. She can be followed [here](https://www.instagram.com/petlart/)*.
+*Thanks to Joanna Płatek for preparing the background and icon of Marcus Aurelius. She can be followed [here](https://www.instagram.com/petlart/)*.
 
 ## Table of content
 
