@@ -117,8 +117,6 @@ Go to the [frontend](/frontend) and run:
 
 `npm install`
 
-`npm install react-router-dom@6`
-
 `npm run dev`
 
 ## Developing
