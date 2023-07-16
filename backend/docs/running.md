@@ -16,15 +16,18 @@ The web container is run from this command:
 You can see how it works in [main.py](../main.py):
 
 ```python
-DEBUG = True
+migrate_and_load_db = True
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    if migrate_and_load_db is True:
+        try:
+            alembic_cfg = Config("alembic.ini")
+            command.upgrade(alembic_cfg, "head")
+            load_simple_db(SessionLocal())
+        except Exception:
+            pass
 
-    if DEBUG is True:
-        alembic_cfg = Config("alembic.ini")
-        command.upgrade(alembic_cfg, "head")
-        load_simple_db(SessionLocal())
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
 ```
 
 As you can see, the hostname and port are hard-coded and can be changed at will. One thing here is tricky:
@@ -33,16 +36,19 @@ As you can see, the hostname and port are hard-coded and can be changed at will.
 
 You can successfully change it to `app` (as the fastapi docs recommend), but your debugger in docker will not work.
 
-In theory, there is no need to create the `DEBUG` variable and you can replace it with `__debug__` and run the backend only in optimized mode (`python -o`) to change `__debug__` to false. It would look like this:
+In theory, there is no need to create the `migrate_and_load_db` variable and you can replace it with `__debug__` and run the backend only in optimized mode (`python -o`) to change `__debug__` to false. It would look like this:
 
 ```python
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
-
     if __debug__ is True:
-        alembic_cfg = Config("alembic.ini")
-        command.upgrade(alembic_cfg, "head")
-        load_simple_db(SessionLocal())
+        try:
+            alembic_cfg = Config("alembic.ini")
+            command.upgrade(alembic_cfg, "head")
+            load_simple_db(SessionLocal())
+        except Exception:
+            pass
+
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
 ```
 
 and run it in docker-compose.yml:

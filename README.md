@@ -101,6 +101,8 @@ If you are interested in how it works see [Technical details](#technical-details
 
     `docker compose up --build`
 
+**Important** if you want run the backend more than once, you have to change the value of `migration_and_load_db` to `False`
+
 More: [running app](backend/docs/running.md)
 
 ### Frontend

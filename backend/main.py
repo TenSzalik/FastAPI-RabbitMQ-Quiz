@@ -7,7 +7,7 @@ from core.models.database import SessionLocal
 from alembic.config import Config
 from alembic import command
 
-DEBUG = True
+migrate_and_load_db = True
 
 app = FastAPI()
 
@@ -26,9 +26,12 @@ app.include_router(token.router)
 app.include_router(user.router)
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    if migrate_and_load_db is True:
+        try:
+            alembic_cfg = Config("alembic.ini")
+            command.upgrade(alembic_cfg, "head")
+            load_simple_db(SessionLocal())
+        except Exception:
+            pass
 
-    if DEBUG is True:
-        alembic_cfg = Config("alembic.ini")
-        command.upgrade(alembic_cfg, "head")
-        load_simple_db(SessionLocal())
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
