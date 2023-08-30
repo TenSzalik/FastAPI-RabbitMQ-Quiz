@@ -1,4 +1,4 @@
-Running `docker compose --build` creates 5 containers:
+Running `docker compose up --build` creates 5 containers:
 
 1. web
     - FastAPI backend
