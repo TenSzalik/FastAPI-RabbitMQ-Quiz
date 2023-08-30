@@ -1,6 +1,5 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends
-from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 from core.models.database import get_database
 from core.models.schemas import (
@@ -13,7 +12,8 @@ from core.models.schemas import (
     UserSchema,
 )
 from core.models.models import Category, Answer, Question, Quiz, Result
-from core.endpoints.token import oauth2_scheme
+from core.managers.token_manager import TokenManager
+from core.managers.database_manager import DatabaseManager, PDatabase
 
 
 router = APIRouter(
@@ -25,14 +25,14 @@ router = APIRouter(
 
 @router.get("/", response_model=list[QuizSchema])
 def read_quiz(database: Session = Depends(get_database)):
-    quiz_list = database.query(Quiz).all()
-    return jsonable_encoder(quiz_list)
+    quiz: PDatabase = DatabaseManager(database)
+    return quiz.read(Quiz)
 
 
-@router.post("/", response_model=QuizCreateSchema)
+@router.post("/")
 def create_quiz(
     current_user: Annotated[  # pylint: disable=unused-argument
-        UserSchema, Depends(oauth2_scheme)
+        UserSchema, Depends(TokenManager.oauth2_scheme)
     ],
     quiz: QuizCreateSchema,
     database: Session = Depends(get_database),
@@ -46,63 +46,57 @@ def create_quiz(
     question_obj = (
         database.query(Question).filter(Question.name == quiz.question).first()
     )
-    database_quiz = Quiz(
-        category=category_obj, answer=answer_obj_list, question=question_obj
+
+    quiz_json: PDatabase = DatabaseManager(database).create(
+        Quiz,
+        {"category": category_obj, "answer": answer_obj_list, "question": question_obj},
     )
-    database.add(database_quiz)
-    database.commit()
     return {
-        "category": database_quiz.category.name,
-        "answer": [x.name for x in database_quiz.answer],
-        "question": database_quiz.question.name,
+        "category": quiz_json.get("category").name,
+        "answer": [x.name for x in quiz_json.get("answer")],
+        "question": quiz_json.get("question").name,
     }
 
 
 @router.post("/category/", response_model=CategoryCreateSchema)
 def create_category(
     current_user: Annotated[  # pylint: disable=unused-argument
-        UserSchema, Depends(oauth2_scheme)
+        UserSchema, Depends(TokenManager.oauth2_scheme)
     ],
     category: CategoryCreateSchema,
     database: Session = Depends(get_database),
 ):
-    category_obj = Category(name=category.name)
-    database.add(category_obj)
-    database.commit()
-    return {"name": category_obj.name}
+    quiz: PDatabase = DatabaseManager(database)
+    return quiz.create(Category, {"name": category.name})
 
 
 @router.post("/question/", response_model=QuestionCreateSchema)
 def create_question(
     current_user: Annotated[  # pylint: disable=unused-argument
-        UserSchema, Depends(oauth2_scheme)
+        UserSchema, Depends(TokenManager.oauth2_scheme)
     ],
     question: QuestionCreateSchema,
     database: Session = Depends(get_database),
 ):
-    question_obj = Question(name=question.name)
-    database.add(question_obj)
-    database.commit()
-    return {"name": question_obj.name}
+    quiz: PDatabase = DatabaseManager(database)
+    return quiz.create(Question, {"name": question.name})
 
 
 @router.post("/answer/", response_model=AnswerCreateSchema)
 def create_answer(
     current_user: Annotated[  # pylint: disable=unused-argument
-        UserSchema, Depends(oauth2_scheme)
+        UserSchema, Depends(TokenManager.oauth2_scheme)
     ],
     answer: AnswerCreateSchema,
     database: Session = Depends(get_database),
 ):
-    answer_obj = Answer(name=answer.name, value=answer.value)
-    database.add(answer_obj)
-    database.commit()
-    return {"name": answer_obj.name, "value": answer_obj.value}
+    quiz: PDatabase = DatabaseManager(database)
+    return quiz.create(Answer, {"name": answer.name, "value": answer.value})
 
 
 @router.post("/result/", response_model=ResultCreateSchema)
 def save_result(result: ResultCreateSchema, database: Session = Depends(get_database)):
-    result_model = Result(age=result.age, sex=result.sex, quiz=result.quiz)
-    database.add(result_model)
-    database.commit()
-    return {"age": result_model.age, "sex": result_model.sex, "quiz": result_model.quiz}
+    quiz: PDatabase = DatabaseManager(database)
+    return quiz.create(
+        Result, {"age": result.age, "sex": result.sex, "quiz": result.quiz}
+    )

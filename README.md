@@ -93,15 +93,9 @@ If you are interested in how it works see [Technical details](#technical-details
 
 ### Backend
 
-1. Install docker 🐋 locally and download the container from RabbitMQ:
+Go to [/backend](/backend) and run:
 
-    `docker run --hostname localhost --name rabbit-server -e RABBITMQ_DEFAULT_USER=guest -e RABBITMQ_DEFAULT_PASS=guest1234 -p 5672:5672 -p 15672:15672 rabbitmq:3-management`
-
-2. Go to [/backend](/backend) and run:
-
-    `docker compose up --build`
-
-**Important:** if you want run the backend more than once, you have to change the value of `migration_and_load_db` to `False`. Otherwise you will get a "unique constraint" error. The error is handled and the backend should still work, but it is worth changing this value
+`docker compose up --build`
 
 More: [running app](backend/docs/running.md)
 
@@ -137,19 +131,16 @@ If you want to create your own quiz, you need to create a user and then authoriz
 
     `docker ps`
 
-2. go to docker container (web service, container must be active):
+2. Run (web service, container must be active):
 
-    `docker exec -it <container_name> bash`
+    `docker exec -it <container_name> pytest tests/tests_*.py`
 
-3. Run:
-
-    `pytest tests/tests_*.py`
 
 ### Debugger
 
 If you want to run pdb/breakpoint on a running server, you need to open the console and run:
 
-`docker attach <console_name>`.
+`docker attach <container_name>`.
 
 In this console, you will operate the debugger. You can see these lines inside docker-compose.yml:
 
@@ -162,15 +153,9 @@ It's responsible for allowing the debugger to run inside the docker container.
 
 ### Useful commands
 
-Go to the docker container (web service, container must be active):
+`docker exec -it <container_name> pylint --recursive=y core conftest.py main.py`
 
-`docker exec -it <container_name> bash`
-
-and you can run:
-
-`pylint --recursive=y core conftest.py main.py`
-
-`black .`
+`docker exec -it <container_name> black .`
 
 ## Technical details
 

@@ -17,7 +17,7 @@ from core.managers.rabbit_manager import (
     RabbitConsumer,
 )
 from core.utils.load_simple_db import load_simple_db
-from core.endpoints.token import create_access_token
+from core.managers.token_manager import TokenManager
 
 
 POSTGRES_USERNAME = os.environ["POSTGRES_USERNAME"]
@@ -71,7 +71,7 @@ def fixture_rabbit_load_creds():
 def token_header():
     return {
         "Authorization": "Bearer "
-        + create_access_token(
+        + TokenManager.create_access_token(
             data={"sub": "foobarbaz@gmail.com"}, expires_delta=timedelta(minutes=30)
         ),
         "token_type": "bearer",

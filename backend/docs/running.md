@@ -1,4 +1,4 @@
-Running `docker compose --build` creates 4 containers:
+Running `docker compose --build` creates 5 containers:
 
 1. web
     - FastAPI backend
@@ -8,6 +8,8 @@ Running `docker compose --build` creates 4 containers:
     - another PostgreSQL database generated for testing
 4. pgadmin
     - PostgreSQL GUI
+5. rabbitmq
+    - RabbitMQ server
 
 The web container is run from this command:
 
